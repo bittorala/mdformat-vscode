@@ -1,0 +1,9 @@
+.vscode/**
+.vscode-test/**
+node_modules/**
+src/**
+*.vsix
+tsconfig.json
+.eslintrc.js
+npm-shrinkwrap.json
+yarn.lock
