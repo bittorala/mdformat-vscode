@@ -283,12 +283,7 @@ export function activate(context: vscode.ExtensionContext) {
         );
 
         const wrap = config.get<string | number>("wrap", "keep");
-        const args: string[] = isWindows
-          ? [
-              "-c",
-              `"import mdformat; import sys; text = sys.stdin.read(); print(mdformat.text(text, options={'wrap': ${wrap}}))"`,
-            ]
-          : ["-m", "mdformat"];
+        const args: string[] = ["-m", "mdformat"];
 
         // Only pass the argument if it's different from "keep" or if it's an integer.
         if (wrap !== "keep" || typeof wrap === "number") {
@@ -310,14 +305,12 @@ export function activate(context: vscode.ExtensionContext) {
         // If a plugin needs specific CLI activation beyond just being present,
         // users should add those flags to 'mdformat.args'.
 
-        if (!isWindows) {
-          args.push("-"); // Read from stdin
-        }
+        args.push("-"); // Read from stdin
 
         const originalText = document.getText();
         const execOptions: cp.SpawnOptions = {
           cwd: path.dirname(document.uri.fsPath),
-          env: { ...process.env },
+          env: { ...process.env, PYTHONIOENCODING: "utf-8" },
         };
         if (isWindows) {
           // Ensure PATH is correctly inherited on Windows
@@ -325,7 +318,10 @@ export function activate(context: vscode.ExtensionContext) {
         }
 
         return new Promise<vscode.TextEdit[]>((resolve, reject) => {
-          const proc = cp.spawn(pythonExecutableForMdformat, args, execOptions); // Use the confirmed path
+          const command = isWindows
+            ? "cmd /c chcp 65001>nul &&" + pythonExecutableForMdformat
+            : pythonExecutableForMdformat;
+          const proc = cp.spawn(command, args, execOptions);
           let stdout = "";
           let stderr = "";
 
