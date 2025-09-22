@@ -32,10 +32,12 @@ See
 [Options](https://mdformat.readthedocs.io/en/stable/users/installation_and_usage.html#options)
 for full reference.
 
+On Windows, only `pythonPath` and `wrap` apply. The rest of the options will be ignored.
+
 | Setting             | Default | Description                                                                                                    |
 | ------------------- | ------- | -------------------------------------------------------------------------------------------------------------- |
 | mdformat.pythonPath | `null`  | Path to the Python interpreter to use for mdformat. If null, uses the interpreter selected in VS Code.         |
 | mdformat.wrap       | `keep`  | How to wrap text. Can be 'keep', 'no', or an integer (e.g., 88).                                               |
 | mdformat.endOfLine  | `keep`  | End of line character, {keep, lf, crlf}                                                                        |
 | mdformat.noValidate | `false` | Disable validation. Allows formatting even if inconsistent HTML outputs are detected.                          |
-| mdformat.args       | `[]`    | Custom arguments to pass to mdformat. Use this for plugins or options not directly supported by the extension. |
+| mdformat.args       | `[]`    | Custom arguments. Check out CLI for available options.                                                         |

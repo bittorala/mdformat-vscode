@@ -7,6 +7,7 @@ import * as vscode from "vscode";
 let mdformatFound: boolean | undefined;
 let pythonPathUsedForLastCheck: string | undefined;
 let outputChannel: vscode.LogOutputChannel = null!;
+const isWindows = process.platform == "win32";
 
 /**
  * Attempt to find a suitable Python interpreter path in the following order:
@@ -33,10 +34,7 @@ async function getPythonInterpreter(
       `Using Python interpreter from "mdformat.pythonPath": ${userPythonPath}`,
     );
     try {
-      const isFile = (await fs.promises.stat(userPythonPath)).isFile();
-      if (!isFile) {
-        throw new Error();
-      }
+      fs.accessSync(userPythonPath, fs.constants.F_OK);
       return userPythonPath;
     } catch {
       outputChannel.error(
@@ -96,10 +94,9 @@ async function getPythonInterpreter(
 
   // 3. Common global Python executables
   outputChannel.info("Trying to find a global Python interpreter in PATH...");
-  const commonPythons =
-    process.platform === "win32"
-      ? ["python.exe", "python3.exe", "py.exe"] // Windows specific, py.exe is the launcher
-      : ["python3", "python"]; // Common for Unix-like
+  const commonPythons = isWindows
+    ? ["python.exe", "python3.exe", "py.exe"] // Windows specific, py.exe is the launcher
+    : ["python3", "python"]; // Common for Unix-like
 
   for (const pyCmd of commonPythons) {
     try {
@@ -285,11 +282,15 @@ export function activate(context: vscode.ExtensionContext) {
           `Formatting with mdformat using: ${pythonExecutableForMdformat}`,
         );
 
-        const args: string[] = ["-m", "mdformat"];
+        const wrap = config.get<string | number>("wrap", "keep");
+        const args: string[] = isWindows
+          ? [
+              "-c",
+              `"import mdformat; import sys; text = sys.stdin.read(); print(mdformat.text(text, options={'wrap': ${wrap}}))"`,
+            ]
+          : ["-m", "mdformat"];
 
-        const wrap = config.get<string | number>("wrap");
-        // mdformat's default for wrap is "keep".
-        // We only pass the argument if it's different from "keep" or if it's an integer.
+        // Only pass the argument if it's different from "keep" or if it's an integer.
         if (wrap !== "keep" || typeof wrap === "number") {
           args.push("--wrap", String(wrap));
         }
@@ -309,14 +310,16 @@ export function activate(context: vscode.ExtensionContext) {
         // If a plugin needs specific CLI activation beyond just being present,
         // users should add those flags to 'mdformat.args'.
 
-        args.push("-"); // Read from stdin
+        if (!isWindows) {
+          args.push("-"); // Read from stdin
+        }
 
         const originalText = document.getText();
         const execOptions: cp.SpawnOptions = {
           cwd: path.dirname(document.uri.fsPath),
           env: { ...process.env },
         };
-        if (process.platform === "win32") {
+        if (isWindows) {
           // Ensure PATH is correctly inherited on Windows
           execOptions.shell = true;
         }
@@ -326,8 +329,12 @@ export function activate(context: vscode.ExtensionContext) {
           let stdout = "";
           let stderr = "";
 
-          proc.stdout?.on("data", (data) => (stdout += data.toString()));
-          proc.stderr?.on("data", (data) => (stderr += data.toString()));
+          proc.stdout?.on("data", (data) => {
+            stdout += data.toString("utf-8");
+          });
+          proc.stderr?.on("data", (data) => {
+            stderr += data.toString("utf-8");
+          });
 
           proc.on("error", (err) => {
             outputChannel.error("Failed to start mdformat process:", err);
@@ -383,7 +390,7 @@ export function activate(context: vscode.ExtensionContext) {
             }
           });
 
-          proc.stdin?.write(originalText);
+          proc.stdin?.write(originalText, "utf-8");
           proc.stdin?.end();
         });
       },
