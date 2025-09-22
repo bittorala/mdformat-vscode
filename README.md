@@ -1,6 +1,6 @@
 # mdformat-vscode
 
-This is an unofficial extension to use [mdformat](https://github.com/hukkin/mdformat) in
+This is an **unofficial** extension to use [mdformat](https://github.com/hukkin/mdformat) in
 VS Code.
 
 ## Usage
@@ -24,7 +24,7 @@ Markdown formatter with:
 
 This extension does not provide a full-fledged LSP Server as other formatters for other
 languages do. A simpler approach invoking `python -m mdformat` for each formatting was
-taken. A potential implementation with such LSP Server is not ruled out.
+taken. A potential implementation with such LSP Server is not ruled out for the future.
 
 ## Settings
 
@@ -32,12 +32,10 @@ See
 [Options](https://mdformat.readthedocs.io/en/stable/users/installation_and_usage.html#options)
 for full reference.
 
-On Windows, only `pythonPath` and `wrap` apply. The rest of the options will be ignored.
-
-| Setting             | Default | Description                                                                                                    |
-| ------------------- | ------- | -------------------------------------------------------------------------------------------------------------- |
-| mdformat.pythonPath | `null`  | Path to the Python interpreter to use for mdformat. If null, uses the interpreter selected in VS Code.         |
-| mdformat.wrap       | `keep`  | How to wrap text. Can be 'keep', 'no', or an integer (e.g., 88).                                               |
-| mdformat.endOfLine  | `keep`  | End of line character, {keep, lf, crlf}                                                                        |
-| mdformat.noValidate | `false` | Disable validation. Allows formatting even if inconsistent HTML outputs are detected.                          |
-| mdformat.args       | `[]`    | Custom arguments. Check out CLI for available options.                                                         |
+| Setting             | Default | Description                                                                                            |
+| ------------------- | ------- | ------------------------------------------------------------------------------------------------------ |
+| mdformat.pythonPath | `null`  | Path to the Python interpreter to use for mdformat. If null, uses the interpreter selected in VS Code. |
+| mdformat.wrap       | `keep`  | How to wrap text. Can be 'keep', 'no', or an integer (e.g., 88).                                       |
+| mdformat.endOfLine  | `keep`  | End of line character, {keep, lf, crlf}                                                                |
+| mdformat.noValidate | `false` | Disable validation. Allows formatting even if inconsistent HTML outputs are detected.                  |
+| mdformat.args       | `[]`    | Custom arguments. Check out CLI for available options.                                                 |

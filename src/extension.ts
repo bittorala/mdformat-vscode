@@ -265,8 +265,7 @@ export function activate(context: vscode.ExtensionContext) {
           );
         }
 
-        // After potential check, evaluate the status
-        if (mdformatFound === false || !pythonPathUsedForLastCheck) {
+        if (!mdformatFound || !pythonPathUsedForLastCheck) {
           // pythonPathUsedForLastCheck should be currentInterpreterForFormatting if a check was just run,
           // or the path that previously failed if mdformatFound is false and no new check was run (though 'needsCheck' should cover this).
           showMdformatNotAvailableError(
@@ -275,16 +274,15 @@ export function activate(context: vscode.ExtensionContext) {
           return [];
         }
 
-        // If we reach here, mdformatFound is true, and pythonPathUsedForLastCheck is the interpreter to use.
         const pythonExecutableForMdformat = pythonPathUsedForLastCheck;
 
         outputChannel.info(
           `Formatting with mdformat using: ${pythonExecutableForMdformat}`,
         );
 
-        const wrap = config.get<string | number>("wrap", "keep");
         const args: string[] = ["-m", "mdformat"];
 
+        const wrap = config.get<string | number>("wrap", "keep");
         // Only pass the argument if it's different from "keep" or if it's an integer.
         if (wrap !== "keep" || typeof wrap === "number") {
           args.push("--wrap", String(wrap));
