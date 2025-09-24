@@ -1,7 +1,8 @@
 # mdformat-vscode
 
-This is an **unofficial** extension to use [mdformat](https://github.com/hukkin/mdformat) in
-VS Code.
+This is an **unofficial** extension to use [mdformat](https://github.com/hukkin/mdformat)
+in VS Code. mdformat is an opinionated Markdown formatter that can be used to enforce a
+consistent style in Markdown files.
 
 ## Usage
 
