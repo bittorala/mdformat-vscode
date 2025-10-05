@@ -7,3 +7,4 @@ tsconfig.json
 .eslintrc.js
 npm-shrinkwrap.json
 yarn.lock
+.venv/**
