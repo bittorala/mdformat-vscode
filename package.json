@@ -2,7 +2,7 @@
   "name": "mdformat",
   "displayName": "mdformat",
   "description": "Unofficial VS Code extension for mdformat Markdown formatter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "bittorala",
   "license": "MIT",
   "engines": {
@@ -103,5 +103,7 @@
     "typescript": "^5.1.3",
     "typescript-eslint": "^8.34.1"
   },
-  "repository": {"url": "https://github.com/bittorala/mdformat-vscode/"}
+  "repository": {
+    "url": "https://github.com/bittorala/mdformat-vscode/"
+  }
 }
